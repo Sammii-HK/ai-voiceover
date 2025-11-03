@@ -1,0 +1,55 @@
+# Environment variables - NEVER commit these!
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv/
+
+# Generated audio files - temporary, don't store
+audio/
+voice_samples/
+*.mp3
+*.wav
+*.aiff
+
+# Uploads - temporary files
+uploads/
+temp_uploads/
+
+# Temporary directories
+tmp/
+temp/
+.tmp/
+*_temp/
+*_tmp/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+.DS_Store?
+
+# Logs
+*.log
+logs/
+
+# Flask
+instance/
+.webassets-cache
+
+study_sets/
+audio/

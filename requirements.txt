@@ -1,0 +1,6 @@
+edge-tts
+pydub
+openai
+flask
+python-dotenv
+werkzeug
