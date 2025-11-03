@@ -1,0 +1,31 @@
+name = "ai-voiceover-api"
+main = "src/index.ts"
+compatibility_date = "2024-11-01"
+compatibility_flags = ["nodejs_compat"]
+
+# D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "ai-voiceover-db"
+database_id = "your-database-id-here"
+
+# Environment Variables
+[env.production.vars]
+ENVIRONMENT = "production"
+
+[env.staging.vars] 
+ENVIRONMENT = "staging"
+
+# R2 Storage for temporary files
+[[r2_buckets]]
+binding = "STORAGE"
+bucket_name = "ai-voiceover-temp"
+
+# Durable Objects for real-time features (future)
+# [[durable_objects.bindings]]
+# name = "PROCESSING_QUEUE"
+# class_name = "ProcessingQueue"
+
+# Worker limits
+[limits]
+cpu_ms = 30000  # 30 seconds for audio processing
