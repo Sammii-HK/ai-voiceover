@@ -9,6 +9,7 @@ import { uploadRoutes } from './routes/upload'
 import { generateRoutes } from './routes/generate'
 import { fileRoutes } from './routes/files'
 import { voiceRoutes } from './routes/voices'
+import { billingRoutes } from './routes/billing'
 
 // Initialize Hono app
 const app = new Hono()
@@ -37,6 +38,7 @@ app.route('/api/upload', uploadRoutes)
 app.route('/api/generate', generateRoutes)  
 app.route('/api/files', fileRoutes)
 app.route('/api/voices', voiceRoutes)
+app.route('/api/billing', billingRoutes)
 
 // 404 handler
 app.notFound((c) => {
