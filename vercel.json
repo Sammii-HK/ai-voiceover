@@ -1,6 +1,0 @@
-{
-  "buildCommand": "cd v2-frontend && npm run build",
-  "outputDirectory": "v2-frontend/.svelte-kit/output/client",
-  "installCommand": "cd v2-frontend && npm install",
-  "framework": "sveltekit"
-}
