@@ -18,9 +18,10 @@ const app = new Hono<{ Bindings: Env }>()
 app.use('*', logger())
 app.use('*', prettyJSON())
 app.use('*', cors({
-  origin: ['https://ai-voiceover.pages.dev', 'http://localhost:3000', 'http://localhost:5173'],
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: ['https://ai-voiceover-three.vercel.app', 'https://ai-voiceover.pages.dev', 'http://localhost:3000', 'http://localhost:4173'],
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }))
 
 // Health check with edge info
