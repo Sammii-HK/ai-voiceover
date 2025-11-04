@@ -17,7 +17,7 @@
 		uploadStatus = 'Uploading...';
 
 		try {
-			const response = await fetch('/api/upload', {
+			const response = await fetch('https://ai-voiceover-api.rss-reply.workers.dev/api/upload', {
 				method: 'POST',
 				body: formData
 			});
