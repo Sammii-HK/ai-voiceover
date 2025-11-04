@@ -1,0 +1,11 @@
+{
+  "buildCommand": "cd v2-frontend && npm run build",
+  "outputDirectory": "v2-frontend/build",
+  "installCommand": "cd v2-frontend && npm install",
+  "framework": "sveltekit",
+  "functions": {
+    "v2-frontend/src/routes/**": {
+      "runtime": "nodejs18.x"
+    }
+  }
+}
