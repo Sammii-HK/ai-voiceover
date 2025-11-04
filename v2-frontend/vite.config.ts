@@ -6,9 +6,9 @@ export default defineConfig({
 	server: {
 		port: 3000,
 		proxy: {
-			// Proxy API calls to Flask backend during development
+			// Proxy API calls to Cloudflare Workers backend
 			'/api': {
-				target: 'http://localhost:5000',
+				target: 'https://ai-voiceover-api.rss-reply.workers.dev',
 				changeOrigin: true
 			}
 		}

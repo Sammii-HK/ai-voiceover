@@ -7,7 +7,7 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB"
 database_name = "ai-voiceover-db"
-database_id = "your-database-id-here"
+database_id = "feaee47e-0082-46f6-9e66-fe084cb4d42b"
 
 # Environment Variables
 [env.production.vars]
@@ -26,6 +26,6 @@ bucket_name = "ai-voiceover-temp"
 # name = "PROCESSING_QUEUE"
 # class_name = "ProcessingQueue"
 
-# Worker limits
-[limits]
-cpu_ms = 30000  # 30 seconds for audio processing
+# Worker limits (requires paid plan)
+# [limits]
+# cpu_ms = 30000  # 30 seconds for audio processing
