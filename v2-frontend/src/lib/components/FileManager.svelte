@@ -36,7 +36,7 @@
 			processingFiles.add(filename);
 			processingFiles = processingFiles; // Trigger reactivity
 
-			const response = await fetch(`/api/generate/${filename}`, {
+			const response = await fetch(`${API_BASE}/api/generate/${filename}`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -67,7 +67,7 @@
 	async function pollStatus(filename: string) {
 		const checkStatus = async () => {
 			try {
-				const response = await fetch(`/api/status/${filename}`);
+				const response = await fetch(`${API_BASE}/api/status/${filename}`);
 				const status = await response.json();
 
 				if (status.status === 'completed') {
@@ -97,7 +97,7 @@
 
 	async function downloadFile(filename: string) {
 		try {
-			const response = await fetch(`/api/download/${filename}`);
+			const response = await fetch(`${API_BASE}/api/download/${filename}`);
 			if (response.ok) {
 				const blob = await response.blob();
 				const url = window.URL.createObjectURL(blob);
@@ -126,7 +126,7 @@
 		}
 
 		try {
-			const response = await fetch(`/api/delete/${filename}`, {
+			const response = await fetch(`${API_BASE}/api/delete/${filename}`, {
 				method: 'POST'
 			});
 
@@ -145,6 +145,9 @@
 	async function refreshFiles() {
 		dispatch('filesChanged');
 	}
+
+	// API base URL
+	const API_BASE = 'https://ai-voiceover-api.rss-reply.workers.dev';
 </script>
 
 <div class="space-y-4">

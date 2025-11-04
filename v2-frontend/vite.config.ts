@@ -6,11 +6,15 @@ export default defineConfig({
 	server: {
 		port: 3000,
 		proxy: {
-			// Proxy API calls to Cloudflare Workers backend
+			// Proxy API calls during development only
 			'/api': {
 				target: 'https://ai-voiceover-api.rss-reply.workers.dev',
 				changeOrigin: true
 			}
 		}
+	},
+	define: {
+		// Use Cloudflare Workers API in production
+		'process.env.VITE_API_URL': JSON.stringify('https://ai-voiceover-api.rss-reply.workers.dev')
 	}
 });
