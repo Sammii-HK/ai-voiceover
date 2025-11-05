@@ -159,6 +159,110 @@ app.get('/api/files', async (c) => {
   }
 })
 
+// Simple auth endpoints for admin access
+app.post('/api/auth/sign-up', async (c) => {
+  try {
+    const { email, password, name } = await c.req.json()
+    
+    if (!email || !password) {
+      return c.json({ error: 'Email and password are required' }, 400)
+    }
+    
+    // Check if admin user
+    const isAdmin = email.toLowerCase() === c.env.ADMIN_USER?.toLowerCase()
+    
+    console.log(`Auth check: ${email} vs ${c.env.ADMIN_USER} = Admin: ${isAdmin}`)
+    
+    // Create user object (in production, save to database)
+    const user = {
+      id: `user_${Date.now()}`,
+      email,
+      name,
+      plan: isAdmin ? 'admin' : 'free', // Use 'admin' plan for admins
+      isAdmin: isAdmin,
+      minutesUsed: isAdmin ? -1 : 0 // -1 = unlimited for admin
+    }
+    
+    // Create simple JWT token
+    const token = btoa(JSON.stringify({ ...user, exp: Date.now() + (7 * 24 * 60 * 60 * 1000) }))
+    
+    return c.json({
+      success: true,
+      user,
+      token
+    })
+    
+  } catch (error) {
+    console.error('Signup error:', error)
+    return c.json({ error: 'Failed to create account' }, 500)
+  }
+})
+
+app.post('/api/auth/sign-in', async (c) => {
+  try {
+    const { email, password } = await c.req.json()
+    
+    if (!email || !password) {
+      return c.json({ error: 'Email and password are required' }, 400)
+    }
+    
+    // Check if admin user
+    const isAdmin = email.toLowerCase() === c.env.ADMIN_USER?.toLowerCase()
+    
+    console.log(`Auth check: ${email} vs ${c.env.ADMIN_USER} = Admin: ${isAdmin}`)
+    
+    const user = {
+      id: `user_${Date.now()}`,
+      email,
+      plan: isAdmin ? 'admin' : 'free', // Use 'admin' plan for admins
+      isAdmin: isAdmin,
+      minutesUsed: isAdmin ? -1 : 0 // -1 = unlimited for admin
+    }
+    
+    const token = btoa(JSON.stringify({ ...user, exp: Date.now() + (7 * 24 * 60 * 60 * 1000) }))
+    
+    return c.json({
+      success: true,
+      user,
+      token
+    })
+    
+  } catch (error) {
+    console.error('Signin error:', error)
+    return c.json({ error: 'Failed to sign in' }, 500)
+  }
+})
+
+app.get('/api/auth/me', async (c) => {
+  try {
+    const authHeader = c.req.header('Authorization')
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return c.json({ error: 'Authentication required' }, 401)
+    }
+    
+    const token = authHeader.slice(7)
+    const userData = JSON.parse(atob(token))
+    
+    if (!userData || userData.exp < Date.now()) {
+      return c.json({ error: 'Token expired' }, 401)
+    }
+    
+    return c.json({
+      success: true,
+      user: {
+        email: userData.email,
+        plan: userData.plan,
+        isAdmin: userData.isAdmin,
+        minutesUsed: userData.minutesUsed
+      }
+    })
+    
+  } catch (error) {
+    return c.json({ error: 'Invalid token' }, 401)
+  }
+})
+
 // Generate audio endpoint (simplified - would use Durable Objects for full processing)
 app.post('/api/generate/:filename', async (c) => {
   try {

@@ -114,36 +114,6 @@
 					</a>
 				</div>
 				
-				<!-- User status -->
-				<div class="flex justify-center items-center gap-4">
-					{#if currentUser}
-						<div class="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-lg shadow-sm">
-							<User class="w-4 h-4 text-gray-600" />
-							<span class="text-sm text-gray-700">
-								{currentUser.email}
-								{#if currentUser.isAdmin}
-									<span class="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs rounded-full font-bold">ADMIN</span>
-								{:else}
-									<span class="ml-2 px-2 py-0.5 bg-indigo-100 text-indigo-800 text-xs rounded-full">{currentUser.plan.toUpperCase()}</span>
-								{/if}
-							</span>
-							<button 
-								on:click={logout}
-								class="ml-2 text-xs text-gray-500 hover:text-gray-700"
-							>
-								Logout
-							</button>
-						</div>
-					{:else}
-						<button 
-							on:click={() => showLogin = true}
-							class="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-lg shadow-sm hover:bg-white transition-colors"
-						>
-							<User class="w-4 h-4 text-gray-600" />
-							<span class="text-sm text-gray-700">Sign In</span>
-						</button>
-					{/if}
-				</div>
 				
 				<p class="text-sm text-gray-500">
 					No account needed • Free voices included • Works on mobile
