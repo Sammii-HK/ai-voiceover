@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import { Volume2, Crown, Zap } from 'lucide-svelte';
+	import { Volume2, Crown, Zap, Play, Pause } from 'lucide-svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -26,6 +26,45 @@
 
 	// Check if OpenAI is available (this would come from your backend)
 	let hasOpenAI = true; // You'll need to fetch this from your API
+	
+	let currentlyPlaying: string | null = null;
+	let audioElement: HTMLAudioElement | null = null;
+
+	function playPreview(voiceType: string, voiceId: string) {
+		const previewUrl = `https://ai-voiceover-api.rss-reply.workers.dev/api/voices/preview/${voiceType}/${voiceId}`;
+		
+		// Stop current audio if playing
+		if (audioElement) {
+			audioElement.pause();
+			audioElement = null;
+		}
+		
+		if (currentlyPlaying === voiceId) {
+			// Stop if same voice
+			currentlyPlaying = null;
+			return;
+		}
+		
+		// Play new audio
+		audioElement = new Audio(previewUrl);
+		currentlyPlaying = voiceId;
+		
+		audioElement.play().catch(error => {
+			console.error('Preview playback failed:', error);
+			currentlyPlaying = null;
+		});
+		
+		audioElement.onended = () => {
+			currentlyPlaying = null;
+			audioElement = null;
+		};
+		
+		audioElement.onerror = () => {
+			console.error('Preview audio failed to load');
+			currentlyPlaying = null;
+			audioElement = null;
+		};
+	}
 
 	function selectVoiceType(type: string) {
 		selectedType = type;
@@ -98,10 +137,22 @@
 						<div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
 							<Volume2 class="w-5 h-5 text-white" />
 						</div>
-						<div>
+						<div class="flex-1">
 							<div class="font-semibold text-gray-900">{description}</div>
 							<div class="text-sm text-gray-600">Microsoft Edge TTS</div>
 						</div>
+						<button
+							type="button"
+							on:click|stopPropagation={() => playPreview('edge', voiceId)}
+							class="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+							title="Preview this voice"
+						>
+							{#if currentlyPlaying === voiceId}
+								<Pause class="w-4 h-4 text-gray-600" />
+							{:else}
+								<Play class="w-4 h-4 text-gray-600" />
+							{/if}
+						</button>
 					</div>
 					{#if selectedVoice === voiceId}
 						<div class="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center">
@@ -126,10 +177,22 @@
 						<div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
 							<Crown class="w-5 h-5 text-white" />
 						</div>
-						<div>
+						<div class="flex-1">
 							<div class="font-semibold text-gray-900">{description}</div>
 							<div class="text-sm text-gray-600">OpenAI TTS HD</div>
 						</div>
+						<button
+							type="button"
+							on:click|stopPropagation={() => playPreview('openai', voiceId)}
+							class="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+							title="Preview this voice"
+						>
+							{#if currentlyPlaying === voiceId}
+								<Pause class="w-4 h-4 text-gray-600" />
+							{:else}
+								<Play class="w-4 h-4 text-gray-600" />
+							{/if}
+						</button>
 					</div>
 					{#if selectedVoice === voiceId}
 						<div class="w-5 h-5 rounded-full bg-purple-600 flex items-center justify-center">

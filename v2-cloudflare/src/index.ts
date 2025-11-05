@@ -38,9 +38,9 @@ app.get('/health', (c) => {
   })
 })
 
-// Voice configuration endpoint
+// Voice configuration endpoint with preview support
 app.get('/api/voices', (c) => {
-  return c.json({
+  const voices = {
     edge: {
       'en-GB-LibbyNeural': 'UK Female - Libby (Natural)',
       'en-GB-SoniaNeural': 'UK Female - Sonia (Professional)',
@@ -55,9 +55,83 @@ app.get('/api/voices', (c) => {
       'onyx': 'Deep Male - Onyx',
       'nova': 'Young Female - Nova (Most Natural)',
       'shimmer': 'Soft Female - Shimmer'
-    },
+    }
+  }
+  
+  // Add preview URLs
+  const voicesWithPreviews = {
+    edge: {},
+    openai: {},
     hasOpenAI: !!c.env.OPENAI_API_KEY
-  })
+  }
+  
+  // Add Edge TTS voices with preview URLs
+  for (const [voiceId, description] of Object.entries(voices.edge)) {
+    voicesWithPreviews.edge[voiceId] = {
+      description,
+      previewUrl: `/api/voices/preview/edge/${voiceId}`,
+      isPremium: false
+    }
+  }
+  
+  // Add OpenAI voices with preview URLs  
+  for (const [voiceId, description] of Object.entries(voices.openai)) {
+    voicesWithPreviews.openai[voiceId] = {
+      description,
+      previewUrl: `/api/voices/preview/openai/${voiceId}`,
+      isPremium: true
+    }
+  }
+  
+  return c.json(voicesWithPreviews)
+})
+
+// Voice preview endpoint
+app.get('/api/voices/preview/:type/:voiceId', async (c) => {
+  try {
+    const voiceType = c.req.param('type') as 'edge' | 'openai'
+    const voiceId = c.req.param('voiceId')
+    
+    if (!['edge', 'openai'].includes(voiceType)) {
+      return c.json({ error: 'Invalid voice type' }, 400)
+    }
+    
+    const previewKey = `${voiceType}_${voiceId}`
+    
+    // Check if preview already exists in R2
+    const existingPreview = await c.env.STORAGE.get(`previews/${previewKey}.mp3`)
+    
+    if (existingPreview) {
+      // Return cached preview
+      return new Response(existingPreview.body, {
+        headers: {
+          'Content-Type': 'audio/mpeg',
+          'Cache-Control': 'public, max-age=31536000', // 1 year
+          'X-Preview-Source': 'cached'
+        }
+      })
+    }
+    
+    // Generate new preview (simplified for edge)
+    const sampleText = "This is a preview of this voice. Clear, natural speech perfect for learning."
+    
+    if (voiceType === 'openai' && !c.env.OPENAI_API_KEY) {
+      return c.json({ error: 'OpenAI not configured' }, 400)
+    }
+    
+    // For edge deployment, we'll return a placeholder response
+    // In a full implementation, you'd use Durable Objects for TTS generation
+    return c.json({
+      message: 'Preview generation not implemented in edge version',
+      voiceType,
+      voiceId,
+      note: 'Use the full Bun backend for preview generation'
+    })
+    
+  } catch (error) {
+    console.error('Preview generation error:', error)
+    return c.json({ error: 'Failed to generate preview' }, 500)
+  }
 })
 
 // File upload endpoint (simplified for edge)
