@@ -1,13 +1,16 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Upload, Mic, Sparkles, FileText, Download, Play, Users, Clock, Shield, ArrowRight, Star } from 'lucide-svelte';
+	import { Upload, Mic, Sparkles, FileText, Download, Play, Users, Clock, Shield, ArrowRight, Star, User } from 'lucide-svelte';
 	import FileUpload from '$lib/components/FileUpload.svelte';
 	import VoiceSelector from '$lib/components/VoiceSelector.svelte';
 	import FileManager from '$lib/components/FileManager.svelte';
+	import LoginModal from '$lib/components/LoginModal.svelte';
 
 	let files: any[] = [];
 	let selectedVoice = { type: 'edge', voice: 'en-GB-LibbyNeural' };
 	let showApp = false;
+	let showLogin = false;
+	let currentUser: any = null;
 
 	async function refreshFiles() {
 		try {
@@ -35,6 +38,44 @@
 		showApp = true;
 		document.getElementById('app-section')?.scrollIntoView({ behavior: 'smooth' });
 	}
+
+	function handleAuthSuccess(event: CustomEvent) {
+		currentUser = event.detail.user;
+		console.log('Logged in as:', currentUser);
+		
+		if (currentUser.isAdmin) {
+			console.log('🔑 Admin access granted!');
+		}
+	}
+
+	function logout() {
+		localStorage.removeItem('auth_token');
+		currentUser = null;
+	}
+
+	// Check for existing auth token on load
+	onMount(() => {
+		const token = localStorage.getItem('auth_token');
+		if (token) {
+			// Verify token with API
+			fetch('https://ai-voiceover-api.rss-reply.workers.dev/api/auth/me', {
+				headers: {
+					'Authorization': `Bearer ${token}`
+				}
+			})
+			.then(res => res.json())
+			.then(data => {
+				if (data.success) {
+					currentUser = data.user;
+				}
+			})
+			.catch(() => {
+				localStorage.removeItem('auth_token');
+			});
+		}
+		
+		refreshFiles();
+	});
 </script>
 
 <svelte:head>
@@ -71,6 +112,37 @@
 					>
 						See Pricing
 					</a>
+				</div>
+				
+				<!-- User status -->
+				<div class="flex justify-center items-center gap-4">
+					{#if currentUser}
+						<div class="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-lg shadow-sm">
+							<User class="w-4 h-4 text-gray-600" />
+							<span class="text-sm text-gray-700">
+								{currentUser.email}
+								{#if currentUser.isAdmin}
+									<span class="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs rounded-full font-bold">ADMIN</span>
+								{:else}
+									<span class="ml-2 px-2 py-0.5 bg-indigo-100 text-indigo-800 text-xs rounded-full">{currentUser.plan.toUpperCase()}</span>
+								{/if}
+							</span>
+							<button 
+								on:click={logout}
+								class="ml-2 text-xs text-gray-500 hover:text-gray-700"
+							>
+								Logout
+							</button>
+						</div>
+					{:else}
+						<button 
+							on:click={() => showLogin = true}
+							class="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-lg shadow-sm hover:bg-white transition-colors"
+						>
+							<User class="w-4 h-4 text-gray-600" />
+							<span class="text-sm text-gray-700">Sign In</span>
+						</button>
+					{/if}
 				</div>
 				
 				<p class="text-sm text-gray-500">
@@ -467,3 +539,6 @@
 		</div>
 	</section>
 </div>
+
+<!-- Login Modal -->
+<LoginModal bind:show={showLogin} on:authSuccess={handleAuthSuccess} />

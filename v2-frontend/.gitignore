@@ -177,3 +177,4 @@ dist
 .vercel
 .wrangler
 .svelte-kit
+.env*.local
