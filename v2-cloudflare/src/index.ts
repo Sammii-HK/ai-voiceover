@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
 import { prettyJSON } from 'hono/pretty-json'
+import OpenAI from 'openai'
 
 // Cloudflare Workers environment
 interface Env {
@@ -445,50 +446,35 @@ app.post('/api/generate/:filename', async (c) => {
         
         console.log('Processing Q&A:', { question: question.slice(0, 50), answer: answer.slice(0, 50) })
         
-        // Generate audio for question
-        const questionResponse = await fetch('https://api.openai.com/v1/audio/speech', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${c.env.OPENAI_API_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            model: 'tts-1',
-            voice: body.voice,
-            input: `Question 1: ${question}`,
-            speed: 1.0
-          })
+        // Initialize OpenAI client
+        const openai = new OpenAI({
+          apiKey: c.env.OPENAI_API_KEY
         })
         
-        if (!questionResponse.ok) {
-          throw new Error('Question TTS failed')
-        }
-        
-        // Generate audio for answer
-        const answerResponse = await fetch('https://api.openai.com/v1/audio/speech', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${c.env.OPENAI_API_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            model: 'tts-1',
-            voice: body.voice,
-            input: `Answer: ${answer}`,
-            speed: 0.9
-          })
+        // Generate audio for question using SDK
+        console.log('Generating question audio...')
+        const questionAudio = await openai.audio.speech.create({
+          model: 'tts-1',
+          voice: body.voice,
+          input: `Question 1: ${question}`,
+          speed: 1.0
         })
         
-        if (!answerResponse.ok) {
-          throw new Error('Answer TTS failed')
-        }
+        // Generate audio for answer using SDK
+        console.log('Generating answer audio...')
+        const answerAudio = await openai.audio.speech.create({
+          model: 'tts-1',
+          voice: body.voice,
+          input: `Answer: ${answer}`,
+          speed: 0.9
+        })
         
-        // For now, just return the question audio (simplified)
-        const questionAudio = await questionResponse.arrayBuffer()
+        // Get the audio buffer (just question for now)
+        const questionBuffer = Buffer.from(await questionAudio.arrayBuffer())
         
         // Store result in R2
         const outputKey = `generated/${filename.replace('.csv', '')}_${body.voice}_${Date.now()}.mp3`
-        await c.env.STORAGE.put(outputKey, questionAudio, {
+        await c.env.STORAGE.put(outputKey, questionBuffer, {
           httpMetadata: {
             contentType: 'audio/mpeg'
           }
