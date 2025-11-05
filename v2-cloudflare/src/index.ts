@@ -119,14 +119,54 @@ app.get('/api/voices/preview/:type/:voiceId', async (c) => {
       return c.json({ error: 'OpenAI not configured' }, 400)
     }
     
-    // For edge deployment, we'll return a placeholder response
-    // In a full implementation, you'd use Durable Objects for TTS generation
+    // Generate preview using OpenAI API directly (for OpenAI voices)
+    if (voiceType === 'openai') {
+      try {
+        const response = await fetch('https://api.openai.com/v1/audio/speech', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${c.env.OPENAI_API_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: 'tts-1',
+            voice: voiceId,
+            input: sampleText,
+            speed: 1.0
+          })
+        })
+        
+        if (response.ok) {
+          const audioBuffer = await response.arrayBuffer()
+          
+          // Cache in R2 for future use
+          await c.env.STORAGE.put(`previews/${previewKey}.mp3`, audioBuffer, {
+            httpMetadata: {
+              contentType: 'audio/mpeg',
+              cacheControl: 'public, max-age=31536000'
+            }
+          })
+          
+          return new Response(audioBuffer, {
+            headers: {
+              'Content-Type': 'audio/mpeg',
+              'Cache-Control': 'public, max-age=31536000',
+              'X-Preview-Source': 'generated'
+            }
+          })
+        }
+      } catch (error) {
+        console.error('OpenAI TTS error:', error)
+      }
+    }
+    
+    // For Edge TTS, return a message that it needs server-side generation
     return c.json({
-      message: 'Preview generation not implemented in edge version',
+      error: 'Edge TTS previews require server-side generation',
+      message: 'OpenAI previews work instantly, Edge TTS previews coming soon',
       voiceType,
-      voiceId,
-      note: 'Use the full Bun backend for preview generation'
-    })
+      voiceId
+    }, 501)
     
   } catch (error) {
     console.error('Preview generation error:', error)
