@@ -143,9 +143,9 @@
 				<!-- Processing tips -->
 				{#if status === 'processing'}
 					<div class="mt-4 text-xs text-gray-500 space-y-1">
-						<p>💡 Tip: Keep this tab open for best results</p>
+						<p>💡 You can close this window - generation continues in background</p>
 						<p>⚡ Using premium voices for natural-sounding audio</p>
-						<p>🌍 Processing on global edge network</p>
+						<p>🔄 Download will start automatically when complete</p>
 					</div>
 				{/if}
 			</div>

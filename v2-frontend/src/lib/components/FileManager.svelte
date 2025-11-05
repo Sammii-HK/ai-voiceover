@@ -130,7 +130,7 @@
 					setTimeout(() => {
 						downloadFile(filename);
 						showProgress = false;
-					}, 2000);
+					}, 1000);
 					
 				} else if (status.status === 'error') {
 					progressData.status = 'error';
@@ -180,11 +180,13 @@
 				// Refresh files after download
 				setTimeout(() => dispatch('filesChanged'), 1000);
 			} else {
-				const error = await response.json();
-				alert(`Download failed: ${error.error}`);
+				// Try to download anyway - sometimes the status check is wrong
+				console.log('Direct download attempt...');
+				window.open(`${API_BASE}/download/${filename}`, '_blank');
 			}
 		} catch (error) {
-			alert(`Download failed: ${error.message}`);
+			console.log('Download error, trying direct link...');
+			window.open(`${API_BASE}/download/${filename}`, '_blank');
 		}
 	}
 
