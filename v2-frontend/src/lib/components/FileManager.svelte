@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import { FileText, Trash2, Download, Play, RefreshCw, Clock } from 'lucide-svelte';
+	import { FileText, Trash2, Download, Play, RefreshCw, Clock, Loader } from 'lucide-svelte';
+	import ProgressModal from './ProgressModal.svelte';
 
 	export let files: any[] = [];
 	export let selectedVoice: { type: string; voice: string };
@@ -8,6 +9,16 @@
 	const dispatch = createEventDispatcher();
 
 	let processingFiles = new Set<string>();
+	let showProgress = false;
+	let progressData = {
+		progress: 0,
+		status: 'processing',
+		currentStep: '',
+		totalSteps: 0,
+		completedSteps: 0,
+		estimatedTime: '',
+		fileName: ''
+	};
 
 	function formatFileSize(bytes: number): string {
 		return (bytes / 1024).toFixed(1) + ' KB';
@@ -36,6 +47,18 @@
 			processingFiles.add(filename);
 			processingFiles = processingFiles; // Trigger reactivity
 
+			// Show progress modal
+			progressData = {
+				progress: 0,
+				status: 'processing',
+				currentStep: 'Starting audio generation...',
+				totalSteps: 10,
+				completedSteps: 0,
+				estimatedTime: '2-3 minutes',
+				fileName: filename
+			};
+			showProgress = true;
+
 			const response = await fetch(`${API_BASE}/api/generate/${filename}`, {
 				method: 'POST',
 				headers: {
@@ -50,45 +73,90 @@
 			const result = await response.json();
 
 			if (result.success) {
+				// Update progress
+				progressData.currentStep = 'Processing audio with AI voices...';
+				progressData.progress = 10;
+				progressData = progressData;
+				
 				// Start polling for status
 				pollStatus(filename);
 			} else {
-				alert(`Error: ${result.error}`);
+				progressData.status = 'error';
+				progressData.currentStep = `Error: ${result.error}`;
+				progressData = progressData;
+				
 				processingFiles.delete(filename);
 				processingFiles = processingFiles;
 			}
 		} catch (error) {
-			alert(`Error: ${error.message}`);
+			progressData.status = 'error';
+			progressData.currentStep = `Error: ${error.message}`;
+			progressData = progressData;
+			
 			processingFiles.delete(filename);
 			processingFiles = processingFiles;
 		}
 	}
 
 	async function pollStatus(filename: string) {
+		let pollCount = 0;
+		const maxPolls = 150; // 5 minutes max (150 * 2s = 300s)
+		
 		const checkStatus = async () => {
 			try {
 				const response = await fetch(`${API_BASE}/api/status/${filename}`);
 				const status = await response.json();
 
+				pollCount++;
+				
+				// Update progress based on time elapsed
+				const progressPercent = Math.min(90, (pollCount / maxPolls) * 100);
+				progressData.progress = progressPercent;
+				progressData.completedSteps = Math.floor(pollCount / 15);
+				progressData.currentStep = `Processing audio... (${Math.floor(pollCount * 2 / 60)}:${(pollCount * 2 % 60).toString().padStart(2, '0')})`;
+				progressData = progressData;
+
 				if (status.status === 'completed') {
+					progressData.progress = 100;
+					progressData.status = 'completed';
+					progressData.currentStep = 'Audio generation complete!';
+					progressData = progressData;
+					
 					processingFiles.delete(filename);
 					processingFiles = processingFiles;
 					dispatch('filesChanged');
 					
-					// Auto-download
-					setTimeout(() => downloadFile(filename), 1000);
+					// Auto-download after brief delay
+					setTimeout(() => {
+						downloadFile(filename);
+						showProgress = false;
+					}, 2000);
+					
 				} else if (status.status === 'error') {
+					progressData.status = 'error';
+					progressData.currentStep = `Generation failed: ${status.error}`;
+					progressData = progressData;
+					
 					processingFiles.delete(filename);
 					processingFiles = processingFiles;
-					alert(`Generation failed: ${status.error}`);
 					dispatch('filesChanged');
-				} else {
+				} else if (pollCount < maxPolls) {
 					// Continue polling
 					setTimeout(checkStatus, 2000);
+				} else {
+					// Timeout
+					progressData.status = 'error';
+					progressData.currentStep = 'Generation timed out. Please try again.';
+					progressData = progressData;
+					
+					processingFiles.delete(filename);
+					processingFiles = processingFiles;
 				}
 			} catch (error) {
 				console.error('Status check failed:', error);
-				setTimeout(checkStatus, 2000);
+				if (pollCount < maxPolls) {
+					setTimeout(checkStatus, 2000);
+				}
 			}
 		};
 
@@ -207,38 +275,43 @@
 					</span>
 				</div>
 
-				<!-- Actions -->
+				<!-- Single Smart Action Button -->
 				<div class="flex items-center gap-2 flex-shrink-0">
 					{#if isCompleted}
+						<!-- Download button -->
 						<button
 							on:click={() => downloadFile(file.name)}
-							class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+							class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors shadow-sm"
 						>
 							<Download class="w-4 h-4" />
-							Download
+							Download MP3
 						</button>
-					{:else if !isProcessing}
-						<button
-							on:click={() => generateAudio(file.name)}
-							class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors"
-						>
-							<Play class="w-4 h-4" />
-							Generate
-						</button>
-					{:else}
+					{:else if isProcessing}
+						<!-- Processing button -->
 						<button
 							disabled
-							class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed"
+							class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg cursor-not-allowed"
 						>
-							<RefreshCw class="w-4 h-4 animate-spin" />
-							Processing
+							<Loader class="w-4 h-4 animate-spin" />
+							Generating...
+						</button>
+					{:else}
+						<!-- Generate button -->
+						<button
+							on:click={() => generateAudio(file.name)}
+							class="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
+						>
+							<Play class="w-4 h-4" />
+							Generate Audio
 						</button>
 					{/if}
 
+					<!-- Delete button (always available when not processing) -->
 					{#if !isProcessing}
 						<button
 							on:click={() => deleteFile(file.name)}
-							class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+							class="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+							title="Delete file"
 						>
 							<Trash2 class="w-4 h-4" />
 						</button>
@@ -254,3 +327,15 @@
 		{/each}
 	</div>
 </div>
+
+<!-- Progress Modal -->
+<ProgressModal 
+	bind:show={showProgress}
+	progress={progressData.progress}
+	status={progressData.status}
+	currentStep={progressData.currentStep}
+	totalSteps={progressData.totalSteps}
+	completedSteps={progressData.completedSteps}
+	estimatedTime={progressData.estimatedTime}
+	fileName={progressData.fileName}
+/>
