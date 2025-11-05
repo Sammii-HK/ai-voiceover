@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
-import { createUser, generateToken, verifyToken } from '../lib/auth'
-import { isAdminUser } from '../pricing'
+import { generateToken, verifyToken } from '../lib/auth'
+import { isAdminUser } from '../lib/pricing'
 
 export const authRoutes = new Hono()
 
@@ -16,7 +16,16 @@ authRoutes.post('/sign-up', async (c) => {
     // Check if user already exists (you'd check your database here)
     // For now, just create the user
     
-    const user = await createUser(email, name)
+    // Create simple user object (in production, save to database)
+    const user = {
+      id: `user_${Date.now()}`,
+      email,
+      name,
+      plan: isAdminUser(email) ? 'pro' : 'free',
+      is_admin: isAdminUser(email),
+      minutes_used_this_month: 0,
+      created_at: new Date()
+    }
     const token = generateToken(user)
     
     return c.json({
@@ -49,7 +58,14 @@ authRoutes.post('/sign-in', async (c) => {
     
     // In production, verify password against database
     // For demo, just create/login the user
-    const user = await createUser(email)
+    const user = {
+      id: `user_${Date.now()}`,
+      email,
+      plan: isAdminUser(email) ? 'pro' : 'free',
+      is_admin: isAdminUser(email),
+      minutes_used_this_month: 0,
+      created_at: new Date()
+    }
     const token = generateToken(user)
     
     return c.json({
