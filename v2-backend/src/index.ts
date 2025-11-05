@@ -40,6 +40,7 @@ app.route('/api/generate', generateRoutes)
 app.route('/api/files', fileRoutes)
 app.route('/api/voices', voiceRoutes)
 app.route('/api/billing', billingRoutes)
+app.route('/api/previews', previewRoutes)
 app.route('/api/auth', authRoutes)
 
 // 404 handler
