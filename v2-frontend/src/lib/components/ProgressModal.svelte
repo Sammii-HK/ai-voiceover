@@ -14,10 +14,8 @@
 	const dispatch = createEventDispatcher();
 
 	function closeModal() {
-		if (status === 'completed' || status === 'error') {
-			show = false;
-			dispatch('close');
-		}
+		show = false;
+		dispatch('close');
 	}
 
 	$: progressPercent = Math.min(100, Math.max(0, progress));
@@ -54,14 +52,13 @@
 							<p class="text-sm text-gray-600">{fileName}</p>
 						</div>
 					</div>
-					{#if status !== 'processing'}
-						<button 
-							on:click={closeModal}
-							class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-						>
-							<X class="w-5 h-5 text-gray-500" />
-						</button>
-					{/if}
+					<button 
+						on:click={closeModal}
+						class="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+						title={status === 'processing' ? 'Close (processing continues in background)' : 'Close'}
+					>
+						<X class="w-5 h-5 text-gray-500" />
+					</button>
 				</div>
 			</div>
 
