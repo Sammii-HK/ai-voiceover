@@ -6,6 +6,7 @@ Simple Flask app for generating study audio from CSV files
 
 import os, csv, tempfile, subprocess, shutil, atexit, time
 from flask import Flask, render_template, request, jsonify, send_file, flash, redirect, url_for, after_this_request
+from flask_cors import CORS
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -22,6 +23,9 @@ load_dotenv()  # For local development
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-key-change-in-production')
+
+# Enable CORS for production
+CORS(app, origins=['https://ai-voiceover-three.vercel.app', 'http://localhost:3000', 'http://localhost:4173'])
 
 # Configuration
 TEMP_FOLDER = tempfile.gettempdir()
