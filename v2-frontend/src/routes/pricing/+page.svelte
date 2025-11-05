@@ -218,31 +218,28 @@
 			{/each}
 		</div>
 
-		<!-- Pay-per-use section -->
+		<!-- Value proposition section -->
 		<div class="max-w-4xl mx-auto mb-16">
 			<div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-8 text-white text-center">
-				<h3 class="text-2xl font-bold mb-4">Pay-per-Use Option</h3>
+				<h3 class="text-2xl font-bold mb-4">Why Choose Our AI Voiceover?</h3>
 				<p class="text-indigo-100 mb-6 text-lg">
-					No monthly commitment? Pay <strong>£0.15 per minute</strong> of generated audio.
-					Perfect for occasional projects or testing premium voices.
+					Purpose-built for learning. Unlike generic text-to-speech tools, 
+					we specialize in <strong>study materials and educational content</strong>.
 				</p>
-				<div class="grid md:grid-cols-3 gap-4 text-center">
+				<div class="grid md:grid-cols-3 gap-6 text-center">
 					<div>
-						<div class="text-2xl font-bold">£1.50</div>
-						<div class="text-indigo-200">~10 minutes</div>
+						<div class="text-lg font-bold mb-2">🎓 Education-First</div>
+						<div class="text-indigo-200 text-sm">Designed specifically for Q&A study sets</div>
 					</div>
 					<div>
-						<div class="text-2xl font-bold">£7.50</div>
-						<div class="text-indigo-200">~50 minutes</div>
+						<div class="text-lg font-bold mb-2">⚡ Instant Results</div>
+						<div class="text-indigo-200 text-sm">Upload CSV → Choose voice → Download MP3</div>
 					</div>
 					<div>
-						<div class="text-2xl font-bold">£15</div>
-						<div class="text-indigo-200">~100 minutes</div>
+						<div class="text-lg font-bold mb-2">🔒 Privacy-First</div>
+						<div class="text-indigo-200 text-sm">No storage, no tracking, instant deletion</div>
 					</div>
 				</div>
-				<button class="mt-6 bg-white text-indigo-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
-					Buy Credits
-				</button>
 			</div>
 		</div>
 

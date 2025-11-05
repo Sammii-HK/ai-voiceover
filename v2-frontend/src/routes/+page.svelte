@@ -264,8 +264,8 @@
 						<Clock class="w-5 h-5 text-yellow-600" />
 					</div>
 					<div>
-						<h3 class="font-semibold text-gray-900 mb-2">Pay-as-you-go options</h3>
-						<p class="text-gray-600 text-sm">Monthly plans or overage billing. Only pay for what you actually use.</p>
+						<h3 class="font-semibold text-gray-900 mb-2">Simple monthly plans</h3>
+						<p class="text-gray-600 text-sm">Clear pricing with no hidden fees. Upgrade or cancel anytime.</p>
 					</div>
 				</div>
 				
@@ -287,7 +287,7 @@
 		<div class="container mx-auto px-4 text-center">
 			<h2 class="text-3xl md:text-4xl font-bold mb-4">Simple, Fair Pricing</h2>
 			<p class="text-xl text-indigo-100 mb-12 max-w-2xl mx-auto">
-				Start free, upgrade when you need more. No hidden fees, no surprises.
+				Start free, upgrade for premium voices and more minutes. Simple, transparent pricing.
 			</p>
 			
 			<div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-8">
@@ -405,7 +405,7 @@
 				
 				<div class="bg-white rounded-xl p-6 shadow-sm">
 					<h3 class="font-semibold text-gray-900 mb-2">What happens if I go over my monthly minutes?</h3>
-					<p class="text-gray-600">You can purchase additional minutes at discounted overage rates: £0.15/min (Free), £0.12/min (Basic), £0.10/min (Pro).</p>
+					<p class="text-gray-600">Simply upgrade to the next plan for more minutes and better value. All plans include generous allowances for typical usage.</p>
 				</div>
 				
 				<div class="bg-white rounded-xl p-6 shadow-sm">
