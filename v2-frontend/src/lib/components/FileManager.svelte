@@ -59,7 +59,7 @@
 			};
 			showProgress = true;
 
-			const response = await fetch(`${API_BASE}/api/generate/${filename}`, {
+			const response = await fetch(`${API_BASE}/generate/${filename}`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -104,7 +104,7 @@
 		
 		const checkStatus = async () => {
 			try {
-				const response = await fetch(`${API_BASE}/api/status/${filename}`);
+				const response = await fetch(`${API_BASE}/status/${filename}`);
 				const status = await response.json();
 
 				pollCount++;
@@ -165,7 +165,7 @@
 
 	async function downloadFile(filename: string) {
 		try {
-			const response = await fetch(`${API_BASE}/api/download/${filename}`);
+			const response = await fetch(`${API_BASE}/download/${filename}`);
 			if (response.ok) {
 				const blob = await response.blob();
 				const url = window.URL.createObjectURL(blob);
@@ -194,7 +194,7 @@
 		}
 
 		try {
-			const response = await fetch(`${API_BASE}/api/delete/${filename}`, {
+			const response = await fetch(`${API_BASE}/delete/${filename}`, {
 				method: 'POST'
 			});
 

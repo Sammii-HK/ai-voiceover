@@ -16,8 +16,9 @@ from datetime import datetime
 import uuid
 import glob
 
-# Load environment variables
-load_dotenv()
+# Load environment variables (Railway provides them directly)
+load_dotenv()  # For local development
+# Railway environment variables are automatically available via os.environ
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-key-change-in-production')
