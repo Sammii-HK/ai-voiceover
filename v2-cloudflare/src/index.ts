@@ -9,6 +9,8 @@ interface Env {
   DB: D1Database
   STORAGE: R2Bucket
   OPENAI_API_KEY: string
+  ADMIN_USER: string
+  JWT_SECRET: string
   ENVIRONMENT: string
 }
 
@@ -21,9 +23,24 @@ app.use('*', prettyJSON())
 app.use('*', cors({
   origin: ['https://ai-voiceover-three.vercel.app', 'https://ai-voiceover.pages.dev', 'http://localhost:3000', 'http://localhost:4173'],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  credentials: true,
+  exposeHeaders: ['Content-Disposition']
 }))
+
+// Explicit OPTIONS handler for preflight requests
+app.options('*', (c) => {
+  return new Response(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': 'https://ai-voiceover-three.vercel.app',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+      'Access-Control-Allow-Credentials': 'true',
+      'Access-Control-Max-Age': '86400'
+    }
+  })
+})
 
 // Health check with edge info
 app.get('/health', (c) => {
@@ -35,7 +52,9 @@ app.get('/health', (c) => {
     framework: 'hono',
     datacenter: cf?.colo || 'unknown',
     country: cf?.country || 'unknown',
-    environment: c.env.ENVIRONMENT || 'development'
+    environment: c.env.ENVIRONMENT || 'development',
+    hasOpenAIKey: !!c.env.OPENAI_API_KEY,
+    keyLength: c.env.OPENAI_API_KEY?.length || 0
   })
 })
 
@@ -447,6 +466,17 @@ app.post('/api/generate/:filename', async (c) => {
         console.log('Processing Q&A:', { question: question.slice(0, 50), answer: answer.slice(0, 50) })
         
         // Initialize OpenAI client
+        console.log('OpenAI API Key available:', !!c.env.OPENAI_API_KEY)
+        
+        console.log('Environment check:', {
+          hasOpenAIKey: !!c.env.OPENAI_API_KEY,
+          keyLength: c.env.OPENAI_API_KEY?.length || 0
+        })
+        
+        if (!c.env.OPENAI_API_KEY) {
+          throw new Error('OpenAI API key not configured in environment')
+        }
+        
         const openai = new OpenAI({
           apiKey: c.env.OPENAI_API_KEY
         })
@@ -498,15 +528,98 @@ app.post('/api/generate/:filename', async (c) => {
       }
     }
     
-    // For Edge TTS, return not implemented
-    return c.json({ 
-      error: 'Edge TTS not implemented in edge version',
-      message: 'Please use OpenAI voices for now'
-    }, 501)
+    // For Edge TTS (free voices) - implement basic processing
+    if (body.voice_type === 'edge') {
+      try {
+        // Get CSV content
+        const csvContent = await fileObject.text()
+        const lines = csvContent.trim().split('\n')
+        
+        if (lines.length < 2) {
+          return c.json({ error: 'Invalid CSV format' }, 400)
+        }
+        
+        // Parse CSV
+        const headers = lines[0].split(',')
+        const frontIndex = headers.findIndex(h => h.trim().toLowerCase() === 'front')
+        const backIndex = headers.findIndex(h => h.trim().toLowerCase() === 'back')
+        
+        if (frontIndex === -1 || backIndex === -1) {
+          return c.json({ error: 'CSV must have Front and Back columns' }, 400)
+        }
+        
+        // Process first Q&A pair for demo
+        const firstDataLine = lines[1].split(',')
+        const question = firstDataLine[frontIndex]?.trim().replace(/"/g, '') || ''
+        const answer = firstDataLine[backIndex]?.trim().replace(/"/g, '') || ''
+        
+        if (!question || !answer) {
+          return c.json({ error: 'No valid Q&A pairs found' }, 400)
+        }
+        
+        console.log('Processing Edge TTS Q&A:', { question: question.slice(0, 50), answer: answer.slice(0, 50) })
+        
+        // For Edge TTS, we need a different approach since it can't run in Workers
+        // For now, return a message that Edge TTS requires the full backend
+        return c.json({
+          error: 'Edge TTS requires full backend processing',
+          message: 'Please use OpenAI voices for instant generation, or use the full backend for Edge TTS',
+          voiceType: 'edge',
+          voiceId: body.voice,
+          suggestion: 'Try switching to Premium voices (OpenAI) for instant processing'
+        }, 501)
+        
+      } catch (error) {
+        console.error('Edge TTS processing error:', error)
+        return c.json({ error: `Edge TTS failed: ${error.message}` }, 500)
+      }
+    }
     
   } catch (error) {
     console.error('Generate error:', error)
     return c.json({ error: 'Generation failed' }, 500)
+  }
+})
+
+// Download endpoint
+app.get('/api/download/:filename', async (c) => {
+  try {
+    const filename = c.req.param('filename')
+    
+    // Find the generated file for this CSV
+    const objects = await c.env.STORAGE.list({
+      prefix: `generated/${filename.replace('.csv', '')}`
+    })
+    
+    if (!objects.objects || objects.objects.length === 0) {
+      return c.json({ error: 'Generated file not found' }, 404)
+    }
+    
+    // Get the most recent generated file
+    const latestFile = objects.objects
+      .sort((a, b) => new Date(b.uploaded).getTime() - new Date(a.uploaded).getTime())[0]
+    
+    const fileObject = await c.env.STORAGE.get(latestFile.key)
+    if (!fileObject) {
+      return c.json({ error: 'File not found in storage' }, 404)
+    }
+    
+    // Determine content type and filename
+    const isAudio = latestFile.key.endsWith('.mp3')
+    const downloadName = `${filename.replace('.csv', '')}_audio.${isAudio ? 'mp3' : 'txt'}`
+    
+    return new Response(fileObject.body, {
+      headers: {
+        'Content-Type': isAudio ? 'audio/mpeg' : 'text/plain',
+        'Content-Disposition': `attachment; filename="${downloadName}"`,
+        'Access-Control-Allow-Origin': 'https://ai-voiceover-three.vercel.app',
+        'Access-Control-Expose-Headers': 'Content-Disposition'
+      }
+    })
+    
+  } catch (error) {
+    console.error('Download error:', error)
+    return c.json({ error: 'Download failed' }, 500)
   }
 })
 

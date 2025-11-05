@@ -214,8 +214,8 @@
 		dispatch('filesChanged');
 	}
 
-	// API base URL
-	const API_BASE = 'https://ai-voiceover-api.rss-reply.workers.dev';
+	// API base URL - Use working Railway Flask backend
+	const API_BASE = 'https://ai-voiceover-production.up.railway.app';
 </script>
 
 <div class="space-y-4">
