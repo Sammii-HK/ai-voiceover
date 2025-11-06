@@ -6,7 +6,7 @@ Simple Flask app for generating study audio from CSV files
 
 import os, csv, tempfile, subprocess, shutil, atexit, time
 from flask import Flask, render_template, request, jsonify, send_file, flash, redirect, url_for, after_this_request
-from flask_cors import CORS
+# from flask_cors import CORS  # Causing Railway crash
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -24,8 +24,14 @@ load_dotenv()  # For local development
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-key-change-in-production')
 
-# Enable CORS for production
-CORS(app, origins=['https://ai-voiceover-three.vercel.app', 'http://localhost:3000', 'http://localhost:4173'])
+# Enable CORS manually (flask-cors was causing crashes)
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', 'https://ai-voiceover-three.vercel.app')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    return response
 
 # Configuration
 TEMP_FOLDER = tempfile.gettempdir()
@@ -437,10 +443,10 @@ def download_audio(filename):
             return jsonify({'error': 'File not ready for download'}), 400
         
         output_path = job['output_path']
-                # Use clean CSV name for download
-                original_csv_name = filename.split('_', 1)[1] if '_' in filename else filename
-                clean_name = original_csv_name.replace('.csv', '')
-                download_name = f"{clean_name}.mp3"
+        # Use clean CSV name for download
+        original_csv_name = filename.split('_', 1)[1] if '_' in filename else filename
+        clean_name = original_csv_name.replace('.csv', '')
+        download_name = f"{clean_name}.mp3"
         
         if not os.path.exists(output_path):
             return jsonify({'error': 'Generated file not found'}), 404
