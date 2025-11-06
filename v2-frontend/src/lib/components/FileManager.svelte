@@ -216,7 +216,7 @@
 		dispatch('filesChanged');
 	}
 
-	// API base URL - Use working Railway Flask backend
+	// API base URL - Railway Flask backend with correct paths
 	const API_BASE = 'https://ai-voiceover-production.up.railway.app';
 </script>
 
@@ -260,21 +260,22 @@
 
 				<!-- Status Badge -->
 				<div class="flex items-center gap-2">
-					<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium {getStatusColor(isProcessing ? 'processing' : file.status)}">
-						<svelte:component 
-							this={StatusIcon} 
-							class="w-3 h-3 {isProcessing ? 'animate-spin' : ''}" 
-						/>
-						{#if isProcessing}
+					{#if isProcessing}
+						<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+							<RefreshCw class="w-3 h-3 animate-spin" />
 							Processing
-						{:else if isCompleted}
-							Ready
-						{:else if file.status.startsWith && file.status.startsWith('error')}
+						</span>
+					{:else if isCompleted}
+						<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+							<Download class="w-3 h-3" />
+							Complete
+						</span>
+					{:else if file.status.startsWith && file.status.startsWith('error')}
+						<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+							<Clock class="w-3 h-3" />
 							Error
-						{:else}
-							Ready
-						{/if}
-					</span>
+						</span>
+					{/if}
 				</div>
 
 				<!-- Single Smart Action Button -->
