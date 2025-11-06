@@ -382,8 +382,7 @@ def generate_audio(filename):
                 elif voice_type == 'openai':
                     generate_openai_tts(filepath, voice, temp_output)
                 
-                # Mark as completed and store output path
-                # Use clean CSV name for output
+                # Use clean CSV name for output (remove timestamp prefix)
                 original_csv_name = filename.split('_', 1)[1] if '_' in filename else filename
                 clean_name = original_csv_name.replace('.csv', '')
                 
@@ -443,10 +442,7 @@ def download_audio(filename):
             return jsonify({'error': 'File not ready for download'}), 400
         
         output_path = job['output_path']
-        # Use clean CSV name for download
-        original_csv_name = filename.split('_', 1)[1] if '_' in filename else filename
-        clean_name = original_csv_name.replace('.csv', '')
-        download_name = f"{clean_name}.mp3"
+        download_name = job['download_name']
         
         if not os.path.exists(output_path):
             return jsonify({'error': 'Generated file not found'}), 404
