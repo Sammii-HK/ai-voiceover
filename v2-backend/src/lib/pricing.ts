@@ -5,20 +5,21 @@ export const PRICING_PLANS = {
     name: 'Free',
     price: 0,
     currency: 'gbp',
-    minutes_per_month: 10,
+    minutes_per_month: -1, // Unlimited!
     voices: ['edge'],
     features: [
-      'Up to 10 minutes of audio/month',
-      'Basic Edge TTS voices (UK/US)', 
-      '5MB file limit',
-      'Personal use only',
-      '£0.15/min overage available'
+      'Unlimited audio generation',
+      'All Edge TTS voices (UK/US)', 
+      'One generation at a time',
+      'Ads during processing',
+      'Personal use only'
     ],
     limits: {
-      minutes_per_month: 10,
+      minutes_per_month: -1, // Unlimited
       max_file_size: 5 * 1024 * 1024, // 5MB
       voices: ['edge'],
-      allow_overage: true
+      concurrent_jobs: 1, // Single queue
+      show_ads: true
     }
   },
   
@@ -35,17 +36,17 @@ export const PRICING_PLANS = {
     features: [
       'Up to 100 minutes of audio/month',
       'All Edge TTS + OpenAI premium voices',
+      'No ads - clean experience',
+      'Up to 3 simultaneous generations',
       '15MB file limit',
-      'Personal & educational use',
-      'Priority processing',
-      '£0.12/min overage (20% discount)'
+      'Priority processing'
     ],
     limits: {
       minutes_per_month: 100,
       max_file_size: 15 * 1024 * 1024, // 15MB
       voices: ['edge', 'openai'],
-      allow_overage: true,
-      overage_rate: 12 // £0.12 per minute
+      concurrent_jobs: 3,
+      show_ads: false
     }
   },
   

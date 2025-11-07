@@ -293,8 +293,8 @@
 			<div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-8">
 				<div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
 					<div class="text-2xl font-bold mb-2">Free</div>
-					<div class="text-indigo-200 mb-4">10 minutes/month</div>
-					<div class="text-sm text-indigo-100">Perfect for trying out</div>
+					<div class="text-indigo-200 mb-4">Unlimited* with ads</div>
+					<div class="text-sm text-indigo-100">One at a time</div>
 				</div>
 				
 				<div class="bg-white/20 backdrop-blur-sm rounded-2xl p-6 border border-white/30 relative">
@@ -304,14 +304,14 @@
 						</span>
 					</div>
 					<div class="text-2xl font-bold mb-2">£9/month</div>
-					<div class="text-indigo-200 mb-4">100 minutes/month</div>
-					<div class="text-sm text-indigo-100">Great for students</div>
+					<div class="text-indigo-200 mb-4">100 min + premium voices</div>
+					<div class="text-sm text-indigo-100">Ad-free, 3 simultaneous</div>
 				</div>
 				
 				<div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
 					<div class="text-2xl font-bold mb-2">£19/month</div>
-					<div class="text-indigo-200 mb-4">300 minutes/month</div>
-					<div class="text-sm text-indigo-100">For educators & creators</div>
+					<div class="text-indigo-200 mb-4">300 min + commercial license</div>
+					<div class="text-sm text-indigo-100">Teams, priority support</div>
 				</div>
 			</div>
 			

@@ -10,8 +10,16 @@
 	export let completedSteps = 0;
 	export let estimatedTime = '';
 	export let fileName = '';
+	export let userPlan = 'free'; // User's current plan
 
 	const dispatch = createEventDispatcher();
+	
+	import ProcessingAds from './ProcessingAds.svelte';
+	
+	let showAds = false;
+	
+	// Show ads for free users during processing
+	$: showAds = userPlan === 'free' && status === 'processing';
 
 	function closeModal() {
 		show = false;
@@ -140,11 +148,21 @@
 					</button>
 				{/if}
 
+				<!-- Ads for free users -->
+				{#if showAds}
+					<ProcessingAds show={true} processingTime={180} />
+				{/if}
+				
 				<!-- Processing tips -->
 				{#if status === 'processing'}
 					<div class="mt-4 text-xs text-gray-500 space-y-1">
 						<p>💡 You can close this window - generation continues in background</p>
-						<p>⚡ Using premium voices for natural-sounding audio</p>
+						{#if userPlan === 'free'}
+							<p>🎧 <strong>Unlimited free generations</strong> supported by ads</p>
+							<p>⚡ Want ad-free processing? <a href="/pricing" class="text-indigo-600 underline">Upgrade to Basic</a></p>
+						{:else}
+							<p>⚡ Using premium voices for natural-sounding audio</p>
+						{/if}
 						<p>🔄 Download will start automatically when complete</p>
 					</div>
 				{/if}
