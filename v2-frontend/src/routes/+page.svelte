@@ -5,6 +5,8 @@
 	import VoiceSelector from '$lib/components/VoiceSelector.svelte';
 	import FileManager from '$lib/components/FileManager.svelte';
 	import LoginModal from '$lib/components/LoginModal.svelte';
+	import InFeedAd from '$lib/components/InFeedAd.svelte';
+	import RelaxedAd from '$lib/components/RelaxedAd.svelte';
 
 	let files: any[] = [];
 	let selectedVoice = { type: 'edge', voice: 'en-GB-LibbyNeural' };
@@ -164,6 +166,9 @@
 		</div>
 	</section>
 
+	<!-- Ad between sections (free users only) -->
+	<InFeedAd adSlot="3715510611" userPlan={currentUser?.plan || 'free'} isAdmin={currentUser?.isAdmin || false} />
+
 	<!-- Why Different -->
 	<section class="py-20">
 		<div class="container mx-auto px-4">
@@ -281,6 +286,9 @@
 			</div>
 		</div>
 	</section>
+
+	<!-- Ad before pricing (free users only) -->
+	<InFeedAd adSlot="4981201262" adFormat="fluid" userPlan={currentUser?.plan || 'free'} isAdmin={currentUser?.isAdmin || false} />
 
 	<!-- Pricing Preview -->
 	<section class="py-20 bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
@@ -508,6 +516,9 @@
 			</div>
 		</div>
 	</section>
+
+	<!-- Relaxed ad at bottom (free users only) -->
+	<RelaxedAd userPlan={currentUser?.plan || 'free'} isAdmin={currentUser?.isAdmin || false} />
 </div>
 
 <!-- Login Modal -->

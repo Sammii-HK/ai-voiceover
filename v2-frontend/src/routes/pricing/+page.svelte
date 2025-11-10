@@ -7,15 +7,16 @@
 			name: 'Free',
 			price: '£0',
 			period: '/month',
-			description: 'Perfect for trying out the service',
-			minutes: '10 minutes',
+			description: 'Unlimited audio generation with ads',
+			minutes: 'Unlimited*',
 			popular: false,
 			features: [
-				'Up to 10 minutes of audio/month',
-				'Basic Edge TTS voices (UK/US)',
+				'Unlimited audio generation',
+				'All Edge TTS voices (UK/US)',
+				'One generation at a time',
+				'Ads during processing',
 				'5MB file limit',
-				'Personal use only',
-				'Standard processing'
+				'Personal use only'
 			],
 			cta: 'Get Started Free',
 			color: 'gray'
@@ -23,19 +24,20 @@
 		{
 			id: 'basic',
 			name: 'Basic',
-			price: '£7',
+			price: '£9',
 			period: '/month',
-			priceAnnual: '£70/year',
-			description: 'Great for students and casual learners',
-			minutes: '60 minutes',
+			priceAnnual: '£90/year',
+			description: 'Ad-free experience with premium voices',
+			minutes: '100 minutes',
 			popular: true,
 			features: [
-				'Up to 60 minutes of audio/month',
-				'All Edge TTS + 3 OpenAI premium voices',
-				'10MB file limit',
+				'Up to 100 minutes of audio/month',
+				'All Edge TTS + OpenAI premium voices',
+				'No ads - clean experience',
+				'Up to 3 simultaneous generations',
+				'15MB file limit',
 				'Personal & educational use',
-				'Priority processing',
-				'Email support'
+				'Priority processing'
 			],
 			cta: 'Start Basic Plan',
 			color: 'indigo'
@@ -43,20 +45,22 @@
 		{
 			id: 'pro',
 			name: 'Pro',
-			price: '£15',
+			price: '£19',
 			period: '/month',
-			priceAnnual: '£150/year',
+			priceAnnual: '£190/year',
 			description: 'For educators and content creators',
-			minutes: '200 minutes',
+			minutes: '300 minutes',
 			popular: false,
 			features: [
-				'Up to 200 minutes of audio/month',
-				'All 6 OpenAI premium voices + Edge TTS',
-				'25MB file limit',
+				'Up to 300 minutes of audio/month',
+				'All OpenAI premium voices + Edge TTS',
+				'No ads - premium experience',
+				'Up to 5 simultaneous generations',
+				'50MB file limit',
 				'Commercial use license included',
 				'Priority processing',
 				'Email support',
-				'Usage analytics'
+				'Advanced usage analytics'
 			],
 			cta: 'Upgrade to Pro',
 			color: 'purple'

@@ -341,4 +341,5 @@
 	completedSteps={progressData.completedSteps}
 	estimatedTime={progressData.estimatedTime}
 	fileName={progressData.fileName}
+	userPlan="free"
 />

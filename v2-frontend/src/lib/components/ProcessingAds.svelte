@@ -4,9 +4,12 @@
 
 	export let show = false;
 	export let processingTime = 180; // 3 minutes in seconds
+	export let userPlan = 'free';
+	export let isAdmin = false;
 	
 	let timeRemaining = processingTime;
 	let adLoaded = false;
+	let adminShowAds = false; // Admin toggle for testing ads
 	
 	onMount(() => {
 		if (show) {
@@ -35,13 +38,15 @@
 			
 			script.onload = () => {
 				adLoaded = true;
-				// Initialize ads
-				try {
-					(window as any).adsbygoogle = (window as any).adsbygoogle || [];
-					(window as any).adsbygoogle.push({});
-				} catch (error) {
-					console.log('Ad loading error:', error);
-				}
+				// Initialize ads after a brief delay
+				setTimeout(() => {
+					try {
+						(window as any).adsbygoogle = (window as any).adsbygoogle || [];
+						(window as any).adsbygoogle.push({});
+					} catch (error) {
+						console.log('Ad loading error:', error);
+					}
+				}, 100);
 			};
 		}
 	}
@@ -53,8 +58,23 @@
 	}
 </script>
 
-{#if show}
+{#if show && (userPlan === 'free' || (isAdmin && adminShowAds))}
 	<div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+		
+		<!-- Admin Controls -->
+		{#if isAdmin}
+			<div class="mb-4 p-2 bg-yellow-100 border border-yellow-300 rounded-lg">
+				<div class="flex items-center justify-between">
+					<span class="text-xs text-yellow-800">🔑 Admin Mode</span>
+					<button 
+						on:click={() => adminShowAds = !adminShowAds}
+						class="text-xs bg-yellow-200 text-yellow-900 px-2 py-1 rounded"
+					>
+						{adminShowAds ? 'Hide Ads' : 'Show Ads'}
+					</button>
+				</div>
+			</div>
+		{/if}
 		<!-- Header -->
 		<div class="flex items-center justify-between mb-4">
 			<div>
@@ -72,8 +92,8 @@
 				<!-- Google AdSense Ad Unit -->
 				<ins class="adsbygoogle"
 					style="display:block"
-					data-ad-client="ca-pub-YOUR-PUBLISHER-ID"
-					data-ad-slot="YOUR-AD-SLOT"
+					data-ad-client="ca-pub-2232955058223462"
+					data-ad-slot="1615960880"
 					data-ad-format="auto"
 					data-full-width-responsive="true">
 				</ins>
