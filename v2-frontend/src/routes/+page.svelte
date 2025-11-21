@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Upload, Mic, Sparkles, FileText, Download, Play, Users, Clock, Shield, ArrowRight, Star, User } from 'lucide-svelte';
+	import { Upload, Mic, Sparkles, FileText, Download, Play, Users, Clock, Shield, ArrowRight, Star, User, BookOpen, GraduationCap, Video, Headphones } from 'lucide-svelte';
 	import FileUpload from '$lib/components/FileUpload.svelte';
 	import VoiceSelector from '$lib/components/VoiceSelector.svelte';
 	import FileManager from '$lib/components/FileManager.svelte';
@@ -10,7 +10,6 @@
 
 	let files: any[] = [];
 	let selectedVoice = { type: 'edge', voice: 'en-GB-LibbyNeural' };
-	let showApp = false;
 	let showLogin = false;
 	let currentUser: any = null;
 
@@ -37,7 +36,6 @@
 	}
 
 	function scrollToApp() {
-		showApp = true;
 		document.getElementById('app-section')?.scrollIntoView({ behavior: 'smooth' });
 	}
 
@@ -394,31 +392,107 @@
 	</section>
 
 	<!-- FAQ -->
-	<section class="py-20 bg-white/50">
+	<section class="py-20">
 		<div class="container mx-auto px-4">
 			<div class="text-center mb-16">
 				<h2 class="text-3xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+				<p class="text-xl text-gray-600">Everything you need to know about AI Voiceover Generator</p>
 			</div>
 			
 			<div class="max-w-3xl mx-auto space-y-6">
 				<div class="bg-white rounded-xl p-6 shadow-sm">
 					<h3 class="font-semibold text-gray-900 mb-2">How many files can I convert on the free plan?</h3>
-					<p class="text-gray-600">The free plan includes 10 minutes of audio generation per month. This typically covers 20-30 study cards, depending on length.</p>
+					<p class="text-gray-600">The free plan includes 10 minutes of audio generation per month. This typically covers 20-30 study cards, depending on length. You can generate unlimited files, but total audio time is limited to 10 minutes per month.</p>
 				</div>
 				
 				<div class="bg-white rounded-xl p-6 shadow-sm">
 					<h3 class="font-semibold text-gray-900 mb-2">Can I use the audio commercially?</h3>
-					<p class="text-gray-600">Pro plans include commercial use licenses. Free and Basic plans are for personal/educational use only.</p>
+					<p class="text-gray-600">Pro and Team plans include commercial use licenses. Free and Basic plans are for personal/educational use only. Commercial use includes selling products, courses, or any revenue-generating activity.</p>
 				</div>
 				
 				<div class="bg-white rounded-xl p-6 shadow-sm">
 					<h3 class="font-semibold text-gray-900 mb-2">What happens if I go over my monthly minutes?</h3>
-					<p class="text-gray-600">Simply upgrade to the next plan for more minutes and better value. All plans include generous allowances for typical usage.</p>
+					<p class="text-gray-600">Simply upgrade to the next plan for more minutes and better value. All plans include generous allowances for typical usage. Overage charges may apply on some plans - check your plan details for specifics.</p>
 				</div>
 				
 				<div class="bg-white rounded-xl p-6 shadow-sm">
 					<h3 class="font-semibold text-gray-900 mb-2">What voices are included?</h3>
-					<p class="text-gray-600">Free: Edge TTS voices (UK/US). Paid: All Edge TTS plus 6 premium OpenAI voices with natural intonation.</p>
+					<p class="text-gray-600">Free: Edge TTS voices (UK/US accents). Paid: All Edge TTS plus 6 premium OpenAI voices with natural intonation and expression. Premium voices offer more realistic speech patterns and better pronunciation.</p>
+				</div>
+
+				<div class="bg-white rounded-xl p-6 shadow-sm">
+					<h3 class="font-semibold text-gray-900 mb-2">What file formats do you support?</h3>
+					<p class="text-gray-600">We accept CSV files with "Front" and "Back" columns. The output is always MP3 format, which is compatible with all devices and media players. CSV files should be UTF-8 encoded for best results.</p>
+				</div>
+
+				<div class="bg-white rounded-xl p-6 shadow-sm">
+					<h3 class="font-semibold text-gray-900 mb-2">Is my data secure and private?</h3>
+					<p class="text-gray-600">Yes, absolutely. We process your CSV files and immediately delete them after audio generation. We never store your content permanently. All data transmission is encrypted via HTTPS, and payment processing is handled securely by Stripe.</p>
+				</div>
+
+				<div class="bg-white rounded-xl p-6 shadow-sm">
+					<h3 class="font-semibold text-gray-900 mb-2">Can I cancel my subscription anytime?</h3>
+					<p class="text-gray-600">Yes, you can cancel your subscription at any time through your account settings. Your subscription will remain active until the end of your current billing period, and you'll continue to have access to all features until then.</p>
+				</div>
+
+				<div class="bg-white rounded-xl p-6 shadow-sm">
+					<h3 class="font-semibold text-gray-900 mb-2">Do I need an account to use the service?</h3>
+					<p class="text-gray-600">No account is required for basic functionality on the free plan. However, creating an account allows you to track your usage, access paid plans, and manage your subscription. Account creation is quick and free.</p>
+				</div>
+
+				<div class="bg-white rounded-xl p-6 shadow-sm">
+					<h3 class="font-semibold text-gray-900 mb-2">How long does it take to generate audio?</h3>
+					<p class="text-gray-600">Audio generation is typically instant or takes just a few seconds, depending on the length of your content. There are no queues or waiting times. Paid plans include priority processing for even faster results.</p>
+				</div>
+
+				<div class="bg-white rounded-xl p-6 shadow-sm">
+					<h3 class="font-semibold text-gray-900 mb-2">Can I use this for languages other than English?</h3>
+					<p class="text-gray-600">Currently, we support English voices with UK and US accents. We're working on adding support for additional languages. If you need a specific language, please contact us to let us know your requirements.</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- About Section -->
+	<section class="py-20 bg-white/50">
+		<div class="container mx-auto px-4">
+			<div class="max-w-4xl mx-auto">
+				<div class="text-center mb-12">
+					<h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">About AI Voiceover Generator</h2>
+					<p class="text-xl text-gray-600">Making learning more accessible through AI-powered audio</p>
+				</div>
+				
+				<div class="bg-white rounded-2xl p-8 shadow-lg space-y-6">
+					<div>
+						<h3 class="text-xl font-semibold text-gray-900 mb-3">Our Mission</h3>
+						<p class="text-gray-600">
+							AI Voiceover Generator was created to help students and educators transform study materials into audio format effortlessly. We believe that learning should be flexible and accessible, allowing you to study anywhere, anytime.
+						</p>
+					</div>
+
+					<div>
+						<h3 class="text-xl font-semibold text-gray-900 mb-3">Why We Built This</h3>
+						<p class="text-gray-600 mb-3">
+							Traditional text-to-speech tools are generic and not optimized for educational content. We saw a need for a service specifically designed for study materials - one that understands the Q&A format of flashcards and study sets.
+						</p>
+						<p class="text-gray-600">
+							Our platform combines the power of AI voice synthesis with an understanding of how students actually learn, creating audio that's perfect for active recall and spaced repetition techniques.
+						</p>
+					</div>
+
+					<div>
+						<h3 class="text-xl font-semibold text-gray-900 mb-3">Privacy & Security</h3>
+						<p class="text-gray-600">
+							Your privacy is paramount. We process your files and delete them immediately - we never store your content. All processing happens securely, and we use industry-standard encryption to protect your data. Learn more in our <a href="/privacy" class="text-indigo-600 hover:text-indigo-800">Privacy Policy</a>.
+						</p>
+					</div>
+
+					<div>
+						<h3 class="text-xl font-semibold text-gray-900 mb-3">Technology</h3>
+						<p class="text-gray-600">
+							We use cutting-edge AI voice synthesis technology from OpenAI and Microsoft Edge TTS to deliver natural-sounding audio. Our platform is built for speed and reliability, ensuring your audio is ready when you need it.
+						</p>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -450,8 +524,172 @@
 		</div>
 	</section>
 
+	<!-- How to Use Guide -->
+	<section class="py-20 bg-white/50">
+		<div class="container mx-auto px-4">
+			<div class="text-center mb-16">
+				<h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">How to Use AI Voiceover Generator</h2>
+				<p class="text-xl text-gray-600">A step-by-step guide to creating your first audio study guide</p>
+			</div>
+			
+			<div class="max-w-4xl mx-auto space-y-8">
+				<div class="bg-white rounded-2xl p-8 shadow-lg">
+					<div class="flex items-start gap-6">
+						<div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0 text-white font-bold text-xl">
+							1
+						</div>
+						<div>
+							<h3 class="text-xl font-semibold text-gray-900 mb-3">Prepare Your CSV File</h3>
+							<p class="text-gray-600 mb-3">
+								Create a CSV file with two columns: "Front" and "Back". The Front column should contain your questions or prompts, and the Back column should contain the answers or explanations.
+							</p>
+							<p class="text-gray-600 text-sm bg-indigo-50 p-3 rounded-lg">
+								<strong>Example:</strong> Front = "What is photosynthesis?", Back = "Photosynthesis is the process by which plants convert light energy into chemical energy."
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="bg-white rounded-2xl p-8 shadow-lg">
+					<div class="flex items-start gap-6">
+						<div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center flex-shrink-0 text-white font-bold text-xl">
+							2
+						</div>
+						<div>
+							<h3 class="text-xl font-semibold text-gray-900 mb-3">Upload Your File</h3>
+							<p class="text-gray-600 mb-3">
+								Drag and drop your CSV file into the upload area, or click to browse and select it. The file will be processed immediately. Maximum file size is 5MB for free users, up to 50MB for Pro users.
+							</p>
+							<p class="text-gray-600 text-sm">
+								Your file is processed securely and deleted immediately after audio generation. We never store your content.
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="bg-white rounded-2xl p-8 shadow-lg">
+					<div class="flex items-start gap-6">
+						<div class="w-12 h-12 bg-gradient-to-br from-green-500 to-teal-600 rounded-xl flex items-center justify-center flex-shrink-0 text-white font-bold text-xl">
+							3
+						</div>
+						<div>
+							<h3 class="text-xl font-semibold text-gray-900 mb-3">Select Your Voice</h3>
+							<p class="text-gray-600 mb-3">
+								Choose from our library of voices. Free users can access Microsoft Edge TTS voices (UK and US accents). Paid users get access to premium OpenAI voices with more natural intonation and expression.
+							</p>
+							<p class="text-gray-600 text-sm">
+								You can preview voices before generating to find the perfect match for your content.
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="bg-white rounded-2xl p-8 shadow-lg">
+					<div class="flex items-start gap-6">
+						<div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0 text-white font-bold text-xl">
+							4
+						</div>
+						<div>
+							<h3 class="text-xl font-semibold text-gray-900 mb-3">Generate and Download</h3>
+							<p class="text-gray-600 mb-3">
+								Click the generate button and wait a few seconds. Your audio file will be ready as an MP3 that you can download immediately. The audio alternates between questions and answers, perfect for active recall practice.
+							</p>
+							<p class="text-gray-600 text-sm">
+								Files are ready instantly - no waiting in queues or processing delays.
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Use Cases -->
+	<section class="py-20">
+		<div class="container mx-auto px-4">
+			<div class="text-center mb-16">
+				<h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Perfect For</h2>
+				<p class="text-xl text-gray-600">Who can benefit from AI Voiceover Generator</p>
+			</div>
+			
+			<div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+				<div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+					<div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+						<GraduationCap class="w-8 h-8 text-white" />
+					</div>
+					<h3 class="text-xl font-semibold text-gray-900 mb-3 text-center">Students</h3>
+					<p class="text-gray-600 text-center mb-4">
+						Transform your flashcards and study notes into audio you can listen to while commuting, exercising, or doing other activities. Perfect for active recall and spaced repetition.
+					</p>
+					<ul class="text-sm text-gray-600 space-y-2">
+						<li class="flex items-start gap-2">
+							<span class="text-indigo-600 mt-1">•</span>
+							<span>Review while walking to class</span>
+						</li>
+						<li class="flex items-start gap-2">
+							<span class="text-indigo-600 mt-1">•</span>
+							<span>Study during commutes</span>
+						</li>
+						<li class="flex items-start gap-2">
+							<span class="text-indigo-600 mt-1">•</span>
+							<span>Reinforce learning hands-free</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+					<div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+						<BookOpen class="w-8 h-8 text-white" />
+					</div>
+					<h3 class="text-xl font-semibold text-gray-900 mb-3 text-center">Educators</h3>
+					<p class="text-gray-600 text-center mb-4">
+						Create audio study guides and supplementary materials for your students. Help them learn more effectively with audio versions of course content.
+					</p>
+					<ul class="text-sm text-gray-600 space-y-2">
+						<li class="flex items-start gap-2">
+							<span class="text-indigo-600 mt-1">•</span>
+							<span>Create audio study guides</span>
+						</li>
+						<li class="flex items-start gap-2">
+							<span class="text-indigo-600 mt-1">•</span>
+							<span>Provide accessible learning materials</span>
+						</li>
+						<li class="flex items-start gap-2">
+							<span class="text-indigo-600 mt-1">•</span>
+							<span>Support diverse learning styles</span>
+						</li>
+					</ul>
+				</div>
+
+				<div class="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+					<div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+						<Video class="w-8 h-8 text-white" />
+					</div>
+					<h3 class="text-xl font-semibold text-gray-900 mb-3 text-center">Content Creators</h3>
+					<p class="text-gray-600 text-center mb-4">
+						Generate professional voiceovers for online courses, tutorials, and educational content. Save time and money compared to hiring voice actors.
+					</p>
+					<ul class="text-sm text-gray-600 space-y-2">
+						<li class="flex items-start gap-2">
+							<span class="text-indigo-600 mt-1">•</span>
+							<span>Create course narrations</span>
+						</li>
+						<li class="flex items-start gap-2">
+							<span class="text-indigo-600 mt-1">•</span>
+							<span>Produce educational videos</span>
+						</li>
+						<li class="flex items-start gap-2">
+							<span class="text-indigo-600 mt-1">•</span>
+							<span>Commercial license included (Pro+)</span>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</section>
+
 	<!-- App Section -->
-	<section id="app-section" class="py-20 {showApp ? 'block' : 'hidden'}">
+	<section id="app-section" class="py-20 bg-white/50">
 		<div class="container mx-auto px-4">
 			<div class="text-center mb-12">
 				<h2 class="text-3xl font-bold text-gray-900 mb-4">Try It Now</h2>
