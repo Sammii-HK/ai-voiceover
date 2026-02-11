@@ -11,6 +11,7 @@ import { fileRoutes } from './routes/files'
 import { voiceRoutes } from './routes/voices'
 import { billingRoutes } from './routes/billing'
 import { authRoutes } from './routes/auth'
+import { previewRoutes } from './routes/previews'
 
 // Initialize Hono app
 const app = new Hono()
@@ -19,9 +20,10 @@ const app = new Hono()
 app.use('*', logger())
 app.use('*', prettyJSON())
 app.use('*', cors({
-  origin: ['http://localhost:3000', 'http://localhost:5173'], // SvelteKit dev servers
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: ['http://localhost:3000', 'http://localhost:5173', 'https://ai-voiceover-three.vercel.app'],
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 }))
 
 // Health check

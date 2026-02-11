@@ -15,7 +15,7 @@
 
 	async function refreshFiles() {
 		try {
-			const response = await fetch('https://ai-voiceover-production.up.railway.app/files');
+			const response = await fetch('https://ai-voiceover-production.up.railway.app/api/files');
 			const data = await response.json();
 			files = data.files || [];
 		} catch (error) {

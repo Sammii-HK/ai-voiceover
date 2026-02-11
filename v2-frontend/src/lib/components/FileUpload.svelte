@@ -17,7 +17,7 @@
 		uploadStatus = 'Uploading...';
 
 		try {
-			const response = await fetch('https://ai-voiceover-production.up.railway.app/upload', {
+			const response = await fetch('https://ai-voiceover-production.up.railway.app/api/upload', {
 				method: 'POST',
 				body: formData
 			});

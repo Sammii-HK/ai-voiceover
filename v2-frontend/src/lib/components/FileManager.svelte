@@ -59,7 +59,7 @@
 			};
 			showProgress = true;
 
-			const response = await fetch(`${API_BASE}/generate/${filename}`, {
+			const response = await fetch(`${API_BASE}/api/generate/${filename}`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -104,7 +104,7 @@
 		
 		const checkStatus = async () => {
 			try {
-				const response = await fetch(`${API_BASE}/status/${filename}`);
+				const response = await fetch(`${API_BASE}/api/generate/status/${filename}`);
 				const status = await response.json();
 
 				pollCount++;
@@ -165,7 +165,7 @@
 
 	async function downloadFile(filename: string) {
 		try {
-			const response = await fetch(`${API_BASE}/download/${filename}`);
+			const response = await fetch(`${API_BASE}/api/generate/download/${filename}`);
 			if (response.ok) {
 				const blob = await response.blob();
 				const url = window.URL.createObjectURL(blob);
@@ -182,11 +182,11 @@
 			} else {
 				// Try to download anyway - sometimes the status check is wrong
 				console.log('Direct download attempt...');
-				window.open(`${API_BASE}/download/${filename}`, '_blank');
+				window.open(`${API_BASE}/api/generate/download/${filename}`, '_blank');
 			}
 		} catch (error) {
 			console.log('Download error, trying direct link...');
-			window.open(`${API_BASE}/download/${filename}`, '_blank');
+			window.open(`${API_BASE}/api/generate/download/${filename}`, '_blank');
 		}
 	}
 
@@ -196,8 +196,8 @@
 		}
 
 		try {
-			const response = await fetch(`${API_BASE}/delete/${filename}`, {
-				method: 'POST'
+			const response = await fetch(`${API_BASE}/api/files/${filename}`, {
+				method: 'DELETE'
 			});
 
 			const result = await response.json();
